@@ -1,0 +1,36 @@
+{
+    # Global options
+    debug
+}
+
+:80 {
+    # Handle /view path with authentication
+    handle /view/* {
+        # Forward auth request to auth service
+        forward_auth http://auth_service:3000 {
+            uri /verify-token
+            uri query token {query.tok}
+            copy_headers X-Real-IP X-Forwarded-For
+        }
+
+        # If auth passes, proxy to web service
+        reverse_proxy web:80 {
+            header_up Host {host}
+            header_up X-Real-IP {remote}
+            header_up X-Forwarded-For {remote}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-CSRFToken {header.X-CSRFToken}
+        }
+    }
+
+    # Handle all other paths without auth
+    handle /* {
+        reverse_proxy web:80 {
+            header_up Host {host}
+            header_up X-Real-IP {remote}
+            header_up X-Forwarded-For {remote}
+            header_up X-Forwarded-Proto {scheme}
+            header_up X-CSRFToken {header.X-CSRFToken}
+        }
+    }
+}
