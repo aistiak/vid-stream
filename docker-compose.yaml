@@ -13,14 +13,12 @@ services:
       ENABLE_CELERY_BEAT: 'no'
       ADMIN_USER: 'admin'
       ADMIN_EMAIL: 'admin@localhost'
-      #ADMIN_PASSWORD: 'uncomment_and_set_password_here'
+      ADMIN_PASSWORD: 'admin'
     command: "./deploy/docker/prestart.sh"
     restart: on-failure
     depends_on:
-      redis:
-        condition: service_healthy
-      db:
-        condition: service_healthy
+      - redis
+      - db
   web:
     image: mediacms/mediacms:latest
     deploy:
@@ -40,7 +38,7 @@ services:
   proxy:
     image: nginx:alpine
     ports:
-      - "80:80"
+      - "8888:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
@@ -96,6 +94,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    ports:
+      - "5432:5432"
   redis:
     image: "redis:alpine"
     restart: always

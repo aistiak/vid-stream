@@ -3,7 +3,7 @@ import os
 from celery.schedules import crontab
 from django.utils.translation import gettext_lazy as _
 
-DEBUG = True
+DEBUG = False
 
 # PORTAL NAME, this is the portal title and
 # is also shown on several places as emails
@@ -48,7 +48,7 @@ ALLOW_RATINGS = False
 ALLOW_RATINGS_CONFIRMED_EMAIL_ONLY = True
 
 # ip of the server should be part of this
-ALLOWED_HOSTS = ["*", "mediacms.io", "127.0.0.1", "localhost","play.360pathshala.com"]
+ALLOWED_HOSTS = ["*", "mediacms.io", "127.0.0.1", "localhost"]
 
 FRONTEND_HOST = "http://localhost"
 # this variable - along with SSL_FRONTEND_HOST is used on several places
@@ -451,14 +451,14 @@ except ImportError:
     pass
 
 
-#if "http" not in FRONTEND_HOST:
+if "http" not in FRONTEND_HOST:
     # FRONTEND_HOST needs a http:// preffix
-#    FRONTEND_HOST = f"http://{FRONTEND_HOST}"  # noqa
+    FRONTEND_HOST = f"http://{FRONTEND_HOST}"  # noqa
 
-#if LOCAL_INSTALL:
-#    SSL_FRONTEND_HOST = FRONTEND_HOST.replace("http", "https")
-#else:
-#    SSL_FRONTEND_HOST = FRONTEND_HOST
+if LOCAL_INSTALL:
+    SSL_FRONTEND_HOST = FRONTEND_HOST.replace("http", "https")
+else:
+    SSL_FRONTEND_HOST = FRONTEND_HOST
 
 if GLOBAL_LOGIN_REQUIRED:
     # this should go after the AuthenticationMiddleware middleware
